@@ -9,7 +9,13 @@ cat file.txt | grep "Failed" > failed.txt
 #Putting just the names in tmp.txt
 cat failed.txt | awk '{print $4 " " $5}' > tmp.txt
 
-printf "\nNumber of failed attempts per user:\n\n"
+if [ -s "tmp.txt" ]
+then
+	printf "\nNumber of failed attempts per user:\n\n"
+else
+	exit
+fi
+
 #Find unique mentions of users who failed to login
 for line in `cat tmp.txt | sort | uniq`; do
 	#Store in variable $tmp the amount of failed logins per each unique username
@@ -19,6 +25,8 @@ for line in `cat tmp.txt | sort | uniq`; do
 	if [ "$tmp" -gt 4 ]; then
 		echo "$line: "
 		echo $tmp
+	else
+		exit
 	fi
 	printf "\n"
 done
