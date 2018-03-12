@@ -2,6 +2,8 @@
 
 ### Basic bash scripting to detect brute force attempts
 
+_brute_ : Our bash script
+
 _file.txt_ : Initial log file, such as a maillog file. This is the one we will use for this script. It will be cleared as often as you choose.
 
 _file2.txt_ : This is our "archived" log information, and it will contain all log info in case you need to look back at past entries manually.
