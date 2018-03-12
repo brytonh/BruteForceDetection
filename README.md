@@ -13,6 +13,9 @@ _failed.txt_ : Created by the script and will contain failed entries
 _tmp.txt_ : Created by script to contain only usernames of those who had logon failures
 
 ### Usage: 
+For my test, put brute and file.txt in the same directory after you've cloned them 
+from here.
+
 Run in the form of: while true; do sleep 300; ./brute; done & 
 *OR use your own while loop and put it in the script*.
 
