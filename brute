@@ -1,0 +1,40 @@
+#!/bin/bash
+#Detect Brute Force Attempts
+#Dirty run-through
+
+#Grab all failed entries since last log clear
+cat file.txt | grep "Failed" > failed.txt
+
+#Let's just grab the usernames of failed logins. 
+#Putting just the names in tmp.txt
+cat failed.txt | awk '{print $4 " " $5}' > tmp.txt
+
+printf "\nNumber of failed attempts per user:\n\n"
+#Find unique mentions of users who failed to login
+for line in `cat tmp.txt | sort | uniq`; do
+	#Store in variable $tmp the amount of failed logins per each unique username
+	tmp=`grep -o $line failed.txt | wc -l | tr -s " "`
+	#If number per unique mention is 5 or above, print that unique username
+	#and their corresponding number of failed login attempts
+	if [ "$tmp" -gt 4 ]; then
+		echo "$line: "
+		echo $tmp
+	fi
+	printf "\n"
+done
+
+#Preserve this data in file2.txt 
+cat file.txt >> file2.txt
+
+#Clear out log we are using for this script
+echo -n "" > file.txt
+
+#Clear failed.txt for next run
+echo -n "" > failed.txt
+
+#Remove tmp.txt
+rm -f tmp.txt
+
+
+
+
