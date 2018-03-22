@@ -4,23 +4,23 @@
 #Dirty run-through
 
 #Grab all failed entries since last log clear
-cat maillog | grep "failed" > failed.txt
+cat /var/log/maillog | grep "failed" > /var/log/failed.txt
 
 #Let's just grab the usernames of failed logins. 
 #Putting just the names in tmp.txt
-cat failed.txt | awk '{print $11}' > tmp.txt
+cat /var/log/failed.txt | awk '{print $11}' > /var/log/tmp.txt
 
-if [ -s "tmp.txt" ]
+if [ -s "/var/log/tmp.txt" ]
 then
 	printf "\nNumber of failed attempts per user:\n\n"
 else
-	echo -n "" > file.txt
+	echo -n "" > /var/log/maillog
 fi
 
 #Find unique mentions of users who failed to login
-for line in `cat tmp.txt | sort | uniq`; do
+for line in `cat /var/log/tmp.txt | sort | uniq`; do
 	#Store in variable $tmp the amount of failed logins per each unique username
-	tmp=`grep -o $line failed.txt | wc -l | tr -s " "`
+	tmp=`grep -o $line /var/log/failed.txt | wc -l | tr -s " "`
 	#If number per unique mention is 5 or above, print that unique username
 	#and their corresponding number of failed login attempts
 	if [ "$tmp" -gt 4 ]; then
@@ -33,13 +33,13 @@ for line in `cat tmp.txt | sort | uniq`; do
 done
 
 #Preserve this data in file2.txt 
-cat maillog >> maillog2
+cat /var/log/maillog >> /var/log/maillog2
 
 #Clear out log we are using for this script
-echo -n "" > maillog
+echo -n "" > /var/log/maillog
 
 #Clear failed.txt for next run
-echo -n "" > failed.txt
+echo -n "" > /var/log/failed.txt
 
 #Remove tmp.txt
-rm -f tmp.txt
+rm -f /var/log/tmp.txt
