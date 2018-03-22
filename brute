@@ -3,22 +3,23 @@
 #Detect Brute Force Attempts
 #Dirty run-through
 
-#Grab all failed entries since last log clear
-cat /var/log/maillog | grep "failed" > /var/log/failed.txt
+while true; do
+   #Grab all failed entries since last log clear
+   cat /var/log/maillog | grep "failed" > /var/log/failed.txt
 
-#Let's just grab the usernames of failed logins. 
-#Putting just the names in tmp.txt
-cat /var/log/failed.txt | awk '{print $11}' > /var/log/tmp.txt
+   #Let's just grab the usernames of failed logins. 
+   #Putting just the names in tmp.txt
+   cat /var/log/failed.txt | awk '{print $11}' > /var/log/tmp.txt
 
-if [ -s "/var/log/tmp.txt" ]
-then
+   if [ -s "/var/log/tmp.txt" ]
+   then
 	printf "\nNumber of failed attempts per user:\n\n"
-else
+   else
 	echo -n "" > /var/log/maillog
-fi
+   fi
 
-#Find unique mentions of users who failed to login
-for line in `cat /var/log/tmp.txt | sort | uniq`; do
+   #Find unique mentions of users who failed to login
+   for line in `cat /var/log/tmp.txt | sort | uniq`; do
 	#Store in variable $tmp the amount of failed logins per each unique username
 	tmp=`grep -o $line /var/log/failed.txt | wc -l | tr -s " "`
 	#If number per unique mention is 5 or above, print that unique username
@@ -30,16 +31,20 @@ for line in `cat /var/log/tmp.txt | sort | uniq`; do
 		break
 	fi
 	printf "\n"
+   done
+
+   #Preserve this data in file2.txt 
+   cat /var/log/maillog >> /var/log/maillog2
+
+   #Clear out log we are using for this script
+   echo -n "" > /var/log/maillog
+
+   #Clear failed.txt for next run
+   echo -n "" > /var/log/failed.txt
+
+   #Remove tmp.txt
+   rm -f /var/log/tmp.txt
+
+   sleep 3m;
+
 done
-
-#Preserve this data in file2.txt 
-cat /var/log/maillog >> /var/log/maillog2
-
-#Clear out log we are using for this script
-echo -n "" > /var/log/maillog
-
-#Clear failed.txt for next run
-echo -n "" > /var/log/failed.txt
-
-#Remove tmp.txt
-rm -f /var/log/tmp.txt
