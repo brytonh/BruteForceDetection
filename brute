@@ -1,13 +1,14 @@
 #!/bin/bash
+
 #Detect Brute Force Attempts
 #Dirty run-through
 
 #Grab all failed entries since last log clear
-cat file.txt | grep "Failed" > failed.txt
+cat maillog | grep "failed" > failed.txt
 
 #Let's just grab the usernames of failed logins. 
 #Putting just the names in tmp.txt
-cat failed.txt | awk '{print $4 " " $5}' > tmp.txt
+cat failed.txt | awk '{print $11}' > tmp.txt
 
 if [ -s "tmp.txt" ]
 then
@@ -32,17 +33,13 @@ for line in `cat tmp.txt | sort | uniq`; do
 done
 
 #Preserve this data in file2.txt 
-cat file.txt >> file2.txt
+cat maillog >> maillog2
 
 #Clear out log we are using for this script
-echo -n "" > file.txt
+echo -n "" > maillog
 
 #Clear failed.txt for next run
 echo -n "" > failed.txt
 
 #Remove tmp.txt
 rm -f tmp.txt
-
-
-
-
